@@ -6,16 +6,13 @@ namespace VehiclePositionSearcher.Helpers
 {
     public static class DataFileConverter
     {
-        public static List<VehiclePosition> ImportVehiclePositions(string fileLocation = 
-            @"C:\Users\teboh\Downloads\MiX\VehiclePositions_DataFile\VehiclePositions.dat")
+        public static List<VehiclePosition> ImportVehiclePositions(string fileLocation)
         {
             List<VehiclePosition> vehiclePositions = new List<VehiclePosition>();
             using (var stream = File.Open(fileLocation, FileMode.Open))
             {
                 using (var reader = new BinaryReader(stream))
                 {
-                    Stopwatch stopwatch = new Stopwatch();
-                    stopwatch.Start();
                     try
                     {
                         while (true)
@@ -34,8 +31,7 @@ namespace VehiclePositionSearcher.Helpers
                     }
                     catch (EndOfStreamException)
                     {
-                        Console.WriteLine(stopwatch.Elapsed);
-                        stopwatch.Stop();
+                        Console.WriteLine("Import finished");
                     }
                 }
             }
