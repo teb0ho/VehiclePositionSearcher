@@ -6,7 +6,8 @@ namespace VehiclePositionSearcher.Helpers
 {
     public static class DataFileConverter
     {
-        public static List<VehiclePosition> ImportVehiclePositions(string fileLocation)
+        public static List<VehiclePosition> ImportVehiclePositions(string fileLocation =
+            @"C:\Users\teboh\Downloads\MiX\VehiclePositions_DataFile\VehiclePositions.dat")
         {
             List<VehiclePosition> vehiclePositions = new List<VehiclePosition>();
             using (var stream = File.Open(fileLocation, FileMode.Open))

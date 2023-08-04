@@ -7,7 +7,11 @@ namespace VehiclePositions
     {
         public static void Main()
         {
-            var vehiclePositions = DataFileConverter.ImportVehiclePositions(@"Data\VehiclePositions.dat");
+            /* call ImportVehiclePosition with your data file location like so:  DataFileConverter.ImportVehiclePositions(@"C:\Users\..........");
+             * It uses my file location by default if no parameter is passed.
+             * I will not embed the file with the project as the file is too large
+             */
+            var vehiclePositions = DataFileConverter.ImportVehiclePositions();
 
             var closestVehicles = GPSLocationHelper.GetNearestLocation(new LookupLocations().LocationsToLookup, vehiclePositions);
 
