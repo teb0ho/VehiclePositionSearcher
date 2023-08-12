@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using System.Xml.Linq;
-using VehiclePositionSearcher.Models;
+﻿using VehiclePositionSearcher.Models;
 
 namespace VehiclePositionSearcher.Helpers
 {
@@ -14,41 +12,32 @@ namespace VehiclePositionSearcher.Helpers
             VehiclePosition closestVehicle = null;
             List<VehiclePosition> closestVehicles = new List<VehiclePosition>();
 
-            closestVehicles.OrderBy(v => v.Latitude).ThenBy(v => v.Longitude).ToList();
+            var vehiclesOrdered = vehicleDataset.OrderBy(v => v.Latitude).ThenBy(v => v.Longitude).ToList();
 
             double minDistance = MaxValue;
-
-
+            
             int median = vehicleDataset.Count / 2;
 
 
             foreach (var location in lookupLocations)
             {
-                if (location.Latitude < vehicleDataset[median].Latitude && location.Longitude < vehicleDataset[median].Longitude)
+                if (location.Latitude < vehiclesOrdered[median].Latitude && location.Longitude < vehiclesOrdered[median].Longitude)
                 {
                     for (int i = median; i > 0; i--)
                     {
-                        double distance = CalculateHaversineDistance(location.Latitude, location.Longitude, vehicleDataset[i].Latitude, vehicleDataset[i].Longitude);
+                        double distance = CalculateHaversineDistance(location.Latitude, location.Longitude, vehiclesOrdered[i].Latitude, vehiclesOrdered[i].Longitude);
 
-                        GetClosetVehicle(vehicleDataset, ref closestVehicle, ref minDistance, i, distance);
-
-                        // break out of loop if the next element is does not have a smaller distance
-                        if (minDistance != MaxValue && distance < minDistance)
-                            break;
+                        GetClosetVehicle(vehiclesOrdered, ref closestVehicle, ref minDistance, i, distance);
                     }
                     minDistance = AddClosestVehicleAndResetMinDistance(closestVehicle, closestVehicles);
                 }
                 else
                 {
-                    for (int i = median + 1; i < vehicleDataset.Count; i++)
+                    for (int i = median + 1; i < vehiclesOrdered.Count; i++)
                     {
-                        double distance = CalculateHaversineDistance(location.Latitude, location.Longitude, vehicleDataset[i].Latitude, vehicleDataset[i].Longitude);
+                        double distance = CalculateHaversineDistance(location.Latitude, location.Longitude, vehiclesOrdered[i].Latitude, vehiclesOrdered[i].Longitude);
 
-                        // break out of loop if the next element is does not have a smaller distance
-                        GetClosetVehicle(vehicleDataset, ref closestVehicle, ref minDistance, i, distance);
-
-                        if (minDistance != MaxValue && distance < minDistance)
-                            break;
+                        GetClosetVehicle(vehiclesOrdered, ref closestVehicle, ref minDistance, i, distance);
                     }
                     minDistance = AddClosestVehicleAndResetMinDistance(closestVehicle, closestVehicles);
                 }
@@ -79,19 +68,17 @@ namespace VehiclePositionSearcher.Helpers
 
         static double CalculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
         {
-            double earthRadius = 6371.0; // Radius of Earth in kilometers
+            double earthRadius = 6372.8;
 
             double dLat = DegreesToRadians(lat2 - lat1);
             double dLon = DegreesToRadians(lon2 - lon1);
+            lat1 = DegreesToRadians(lat1);
+            lat2 = DegreesToRadians(lat2);
 
-            double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                       Math.Cos(DegreesToRadians(lat1)) * Math.Cos(DegreesToRadians(lat2)) *
-                       Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-
-            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-            double distance = earthRadius * c;
-            return distance;
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Sin(dLon / 2) * Math.Sin(dLon / 2) * Math.Cos(lat1) * Math.Cos(lat2);
+            var c = 2 * Math.Asin(Math.Sqrt(a));
+            
+            return earthRadius * c;
         }
     }
 }

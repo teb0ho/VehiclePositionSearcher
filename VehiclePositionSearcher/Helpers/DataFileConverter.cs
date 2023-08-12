@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using VehiclePositionSearcher.Models;
 
 namespace VehiclePositionSearcher.Helpers
@@ -22,8 +21,8 @@ namespace VehiclePositionSearcher.Helpers
                             {
                                 VehicleId = reader.ReadInt32(),
                                 VehicleRegistration = ReadAscii(reader),
-                                Longitude = reader.ReadSingle(),
                                 Latitude = reader.ReadSingle(),
+                                Longitude = reader.ReadSingle(),
                                 RecordedTimeUTC = reader.ReadInt64()
                             };
 
@@ -40,7 +39,7 @@ namespace VehiclePositionSearcher.Helpers
             return vehiclePositions;
         }
 
-        public static string ReadAscii(BinaryReader input)
+        private static string ReadAscii(BinaryReader input)
         {
             List<byte> strBytes = new List<byte>();
             int b;
